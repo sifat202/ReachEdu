@@ -4,6 +4,8 @@ import Home from "../Pages/Home"
 import Tracks from "../Pages/Tracks";
 import Course from "../Pages/Course";
 import MoreCourses from "../Pages/MoreCourses";
+import Login from "../Authlayout/Login";
+// import Register from "../Authlayout/Register";
 
 const router = createBrowserRouter([
 {
@@ -26,7 +28,12 @@ const router = createBrowserRouter([
         {
             path:'more-courses',
             element:<MoreCourses></MoreCourses>
-        }
+        },
+        {
+            path:'login',
+            element:<Login></Login>
+        },
+      
     ]
 }
 ])

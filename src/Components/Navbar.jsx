@@ -1,52 +1,60 @@
-import React, { useContext, useState } from 'react';
-import { Link, NavLink } from 'react-router';
-import { AuthContext } from '../Auth/AuthContext';
+import React, { useContext, useState } from "react";
+import { Link, NavLink } from "react-router";
+import { AuthContext } from "../Auth/AuthContext";
+import api from "../Api/Api";
 // import { AuthContext } from '../Auth/AuthContext';
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [authError, setAuthError] = useState('');
+  const [authError, setAuthError] = useState("");
   const [signingIn, setSigningIn] = useState(false);
 
   const { user, loading, signInWithGoogle, logOut } = useContext(AuthContext);
 
   const navItems = [
-    { name: 'Overview', path: '/' },
-    { name: 'Tracks', path: '/tracks' },
-    { name: 'My Course', path: '/course' },
-    { name: 'More Courses', path: '/more-courses' },
+    { name: "Overview", path: "/" },
+    { name: "Tracks", path: "/tracks" },
+    { name: "My Course", path: "/course" },
+    { name: "More Courses", path: "/more-courses" },
   ];
 
   // Active link gets a crisp pill highlight; inactive stays clean and subtle
   const linkClass = ({ isActive }) =>
     `px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
       isActive
-        ? 'bg-emerald-600 text-white shadow-xs'
-        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+        ? "bg-emerald-600 text-white shadow-xs"
+        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
     }`;
 
   const handleDemoLogin = async () => {
-    setAuthError('');
+    setAuthError("");
     setSigningIn(true);
     try {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      console.log(result);
+      const studentData = {
+        name: result.user.displayName,
+        email: result.user.email,
+        photo: result.user.photoURL,
+      };
+      api.post("/students", studentData).then((res) => console.log(res.data));
     } catch (err) {
-      setAuthError(err?.message || 'Google sign-in failed');
+      setAuthError(err?.message || "Google sign-in failed");
     } finally {
       setSigningIn(false);
     }
   };
 
   const handleLogout = async () => {
-    setAuthError('');
+    setAuthError("");
     try {
       await logOut();
     } catch (err) {
-      setAuthError(err?.message || 'Sign-out failed');
+      setAuthError(err?.message || "Sign-out failed");
     }
   };
 
-  const displayName = user?.displayName || user?.email || 'Learner';
+  const displayName = user?.displayName || user?.email || "Learner";
   const fallbackInitial = displayName.charAt(0).toUpperCase();
 
   return (
@@ -71,7 +79,11 @@ const Navbar = () => {
           <ul className="hidden md:flex items-center gap-1.5">
             {navItems.map((item) => (
               <li key={item.path}>
-                <NavLink to={item.path} end={item.path === '/'} className={linkClass}>
+                <NavLink
+                  to={item.path}
+                  end={item.path === "/"}
+                  className={linkClass}
+                >
                   {item.name}
                 </NavLink>
               </li>
@@ -124,7 +136,7 @@ const Navbar = () => {
               disabled={signingIn}
               className="btn btn-sm rounded-full bg-slate-900 hover:bg-emerald-700 text-white border-none px-5 font-medium normal-case"
             >
-              {signingIn ? 'Signing in...' : 'Login'}
+              {signingIn ? "Signing in..." : "Login"}
             </button>
           )}
 
@@ -137,12 +149,34 @@ const Navbar = () => {
             className="btn btn-sm btn-ghost btn-square md:hidden text-slate-800"
           >
             {mobileOpen ? (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7h16M4 12h10M4 17h16" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 7h16M4 12h10M4 17h16"
+                />
               </svg>
             )}
           </button>
@@ -163,13 +197,13 @@ const Navbar = () => {
             <NavLink
               key={item.path}
               to={item.path}
-              end={item.path === '/'}
+              end={item.path === "/"}
               onClick={() => setMobileOpen(false)}
               className={({ isActive }) =>
                 `block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-emerald-600 text-white'
-                    : 'text-slate-700 hover:bg-slate-100'
+                    ? "bg-emerald-600 text-white"
+                    : "text-slate-700 hover:bg-slate-100"
                 }`
               }
             >
